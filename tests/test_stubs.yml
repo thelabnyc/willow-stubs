@@ -1,0 +1,49 @@
+- case: open_image
+  mypy_config: |
+    [mypy]
+  main: |
+    from io import BytesIO
+    from willow.image import Image, ImageFile, JPEGImageFile
+    f = BytesIO(b"fake")
+    img = Image.open(f)
+    reveal_type(img)  # N: Revealed type is "willow.image.Image"
+
+- case: image_file_classes
+  mypy_config: |
+    [mypy]
+  main: |
+    from io import BytesIO
+    from willow.image import JPEGImageFile, PNGImageFile, GIFImageFile, ImageFile
+    f = BytesIO(b"fake")
+    jpeg = JPEGImageFile(f)
+    reveal_type(jpeg.f)  # N: Revealed type is "typing.IO[builtins.bytes]"
+    reveal_type(jpeg.format_name)  # N: Revealed type is "builtins.str"
+    reveal_type(jpeg.mime_type)  # N: Revealed type is "builtins.str"
+
+- case: willow_registry
+  mypy_config: |
+    [mypy]
+  main: |
+    from willow.registry import WillowRegistry, registry
+    reveal_type(registry)  # N: Revealed type is "willow.registry.WillowRegistry"
+    result = registry.operation_exists("resize")
+    reveal_type(result)  # N: Revealed type is "builtins.bool"
+
+- case: svg_image
+  mypy_config: |
+    [mypy]
+  main: |
+    from willow.svg import SvgImage, SvgWrapper, ViewBox
+    vb = ViewBox(0, 0, 100, 100)
+    reveal_type(vb.width)  # N: Revealed type is "builtins.float"
+    reveal_type(vb.height)  # N: Revealed type is "builtins.float"
+
+- case: optimizer_base
+  mypy_config: |
+    [mypy]
+  main: |
+    from willow.optimizers.base import OptimizerBase
+    result = OptimizerBase.check_library()
+    reveal_type(result)  # N: Revealed type is "builtins.bool"
+    result2 = OptimizerBase.applies_to("jpeg")
+    reveal_type(result2)  # N: Revealed type is "builtins.bool"

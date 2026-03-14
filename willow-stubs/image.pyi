@@ -1,0 +1,125 @@
+from collections.abc import Callable
+from io import BytesIO
+from tempfile import SpooledTemporaryFile
+from typing import IO, Any
+
+from xml.etree.ElementTree import ElementTree
+
+from .registry import registry as registry
+
+class UnrecognisedImageFormatError(IOError): ...
+class BadImageOperationError(ValueError): ...
+
+class Image:
+    @classmethod
+    def check(cls) -> None: ...
+    @staticmethod
+    def operation(func: Callable[..., Any]) -> Callable[..., Any]: ...
+    @staticmethod
+    def converter_to(
+        to_class: type[Image], cost: int | None = None
+    ) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+    @staticmethod
+    def converter_from(
+        from_class: type[Image] | list[type[Image]], cost: int | None = None
+    ) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+    def __getattr__(self, attr: str) -> Any: ...
+    @classmethod
+    def open(cls, f: Any) -> Image: ...
+    @classmethod
+    def maybe_xml(cls, f: IO[bytes]) -> bool: ...
+    def save(
+        self,
+        image_format: str,
+        output: IO[bytes],
+        apply_optimizers: bool = True,
+    ) -> ImageFile | None: ...
+    def optimize(
+        self,
+        image_file: SpooledTemporaryFile[bytes] | BytesIO | str | bytes | IO[bytes],
+        image_format: str,
+    ) -> None: ...
+
+class ImageBuffer(Image):
+    size: tuple[int, int]
+    data: bytes
+    def __init__(self, size: tuple[int, int], data: bytes) -> None: ...
+    def get_size(self) -> tuple[int, int]: ...
+
+class RGBImageBuffer(ImageBuffer):
+    mode: str
+    def has_alpha(self) -> bool: ...
+    def has_animation(self) -> bool: ...
+
+class RGBAImageBuffer(ImageBuffer):
+    mode: str
+    def has_alpha(self) -> bool: ...
+    def has_animation(self) -> bool: ...
+
+class ImageFile(Image):
+    @property
+    def format_name(self) -> str: ...
+    @property
+    def mime_type(self) -> str: ...
+    f: IO[bytes]
+    def __init__(self, f: IO[bytes]) -> None: ...
+
+class JPEGImageFile(ImageFile):
+    @property
+    def format_name(self) -> str: ...
+    @property
+    def mime_type(self) -> str: ...
+
+class PNGImageFile(ImageFile):
+    @property
+    def format_name(self) -> str: ...
+    @property
+    def mime_type(self) -> str: ...
+
+class GIFImageFile(ImageFile):
+    @property
+    def format_name(self) -> str: ...
+    @property
+    def mime_type(self) -> str: ...
+
+class BMPImageFile(ImageFile):
+    @property
+    def format_name(self) -> str: ...
+    @property
+    def mime_type(self) -> str: ...
+
+class TIFFImageFile(ImageFile):
+    @property
+    def format_name(self) -> str: ...
+    @property
+    def mime_type(self) -> str: ...
+
+class WebPImageFile(ImageFile):
+    @property
+    def format_name(self) -> str: ...
+    @property
+    def mime_type(self) -> str: ...
+
+class SvgImageFile(ImageFile):
+    format_name: str
+    mime_type: str
+    dom: ElementTree
+    def __init__(self, f: IO[bytes], dom: ElementTree | None = None) -> None: ...
+
+class HeicImageFile(ImageFile):
+    @property
+    def format_name(self) -> str: ...
+    @property
+    def mime_type(self) -> str: ...
+
+class AvifImageFile(ImageFile):
+    @property
+    def format_name(self) -> str: ...
+    @property
+    def mime_type(self) -> str: ...
+
+class IcoImageFile(ImageFile):
+    format_name: str
+    mime_type: str
+
+INITIAL_IMAGE_CLASSES: dict[str, type[ImageFile]]
