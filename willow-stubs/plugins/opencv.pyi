@@ -1,11 +1,11 @@
-from typing import Any
+from numpy import ndarray
 
 from willow.image import Image, RGBImageBuffer
 
 class BaseOpenCVImage(Image):
-    image: Any
+    image: ndarray
     size: tuple[int, int]
-    def __init__(self, image: Any, size: tuple[int, int]) -> None: ...
+    def __init__(self, image: ndarray, size: tuple[int, int]) -> None: ...
     @classmethod
     def check(cls) -> None: ...
     def get_size(self) -> tuple[int, int]: ...

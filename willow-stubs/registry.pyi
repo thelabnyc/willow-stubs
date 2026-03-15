@@ -1,8 +1,13 @@
+import types
 from collections.abc import Callable, Generator
 from typing import Any
 
 from .image import Image
 from .optimizers.base import OptimizerBase
+
+_ConverterFunc = Callable[..., Image]
+_OperationFunc = Callable[..., Any]
+_PathStep = tuple[_ConverterFunc, type[Image]]
 
 class UnrecognisedOperationError(LookupError): ...
 class UnavailableOperationError(LookupError): ...
@@ -14,25 +19,25 @@ class WillowRegistry:
         self,
         image_class: type[Image],
         operation_name: str,
-        func: Callable[..., Any],
+        func: _OperationFunc,
     ) -> None: ...
     def register_converter(
         self,
         from_image_class: type[Image],
         to_image_class: type[Image],
-        func: Callable[..., Any],
+        func: _ConverterFunc,
         cost: int | None = None,
     ) -> None: ...
     def register_image_class(self, image_class: type[Image]) -> None: ...
-    def register_plugin(self, plugin: Any) -> None: ...
+    def register_plugin(self, plugin: types.ModuleType) -> None: ...
     def register_optimizer(self, optimizer_class: type[OptimizerBase]) -> None: ...
     def get_operation(
         self, image_class: type[Image], operation_name: str
-    ) -> Callable[..., Any]: ...
+    ) -> _OperationFunc: ...
     def operation_exists(self, operation_name: str) -> bool: ...
     def get_converter(
         self, from_image_class: type[Image], to_image_class: type[Image]
-    ) -> Callable[..., Any]: ...
+    ) -> _ConverterFunc: ...
     def get_converter_cost(
         self, from_image_class: type[Image], to_image_class: type[Image]
     ) -> int: ...
@@ -46,35 +51,35 @@ class WillowRegistry:
     ) -> list[type[OptimizerBase]]: ...
     def get_converters_from(
         self, from_image_class: type[Image]
-    ) -> Generator[tuple[Callable[..., Any], type[Image]]]: ...
+    ) -> Generator[_PathStep]: ...
     def find_all_paths(
         self,
         start: type[Image],
         end: type[Image],
-        path: list[tuple[Callable[..., Any], type[Image]]] = ...,
+        path: list[_PathStep] = ...,
         seen_classes: set[type[Image]] = ...,
-    ) -> list[list[tuple[Callable[..., Any], type[Image]]]]: ...
+    ) -> list[list[_PathStep]]: ...
     def get_path_cost(
         self,
         start: type[Image],
-        path: list[tuple[Callable[..., Any], type[Image]]],
+        path: list[_PathStep],
     ) -> int: ...
     def find_shortest_path(
         self, start: type[Image], end: type[Image]
-    ) -> tuple[list[tuple[Callable[..., Any], type[Image]]] | None, int | None]: ...
+    ) -> tuple[list[_PathStep] | None, int | None]: ...
     def find_closest_image_class(
         self, start: type[Image], image_classes: set[type[Image]]
     ) -> tuple[
         type[Image] | None,
-        list[tuple[Callable[..., Any], type[Image]]] | None,
+        list[_PathStep] | None,
         int | None,
     ]: ...
     def find_operation(
         self, from_class: type[Image], operation_name: str
     ) -> tuple[
-        Callable[..., Any],
+        _OperationFunc,
         type[Image],
-        list[tuple[Callable[..., Any], type[Image]]],
+        list[_PathStep],
         int,
     ]: ...
 
