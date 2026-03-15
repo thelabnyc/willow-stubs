@@ -1,5 +1,5 @@
-import logging
 from typing import ClassVar
+import logging
 
 logger: logging.Logger
 
@@ -8,6 +8,7 @@ class OptimizerBase:
     image_format: ClassVar[str]
     class Meta:
         abstract: bool
+
     @classmethod
     def applies_to(cls, image_format: str) -> bool: ...
     @classmethod

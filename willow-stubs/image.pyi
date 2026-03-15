@@ -2,7 +2,6 @@ from collections.abc import Callable
 from io import BytesIO
 from tempfile import SpooledTemporaryFile
 from typing import IO, Any, TypeVar
-
 from xml.etree.ElementTree import ElementTree
 
 from .registry import registry as registry
@@ -18,13 +17,9 @@ class Image:
     @staticmethod
     def operation(func: _F) -> _F: ...
     @staticmethod
-    def converter_to(
-        to_class: type[Image], cost: int | None = None
-    ) -> Callable[[_F], _F]: ...
+    def converter_to(to_class: type[Image], cost: int | None = None) -> Callable[[_F], _F]: ...
     @staticmethod
-    def converter_from(
-        from_class: type[Image] | list[type[Image]], cost: int | None = None
-    ) -> Callable[[_F], _F]: ...
+    def converter_from(from_class: type[Image] | list[type[Image]], cost: int | None = None) -> Callable[[_F], _F]: ...
     def __getattr__(self, attr: str) -> Callable[..., Any]: ...
     @classmethod
     def open(cls, f: IO[bytes]) -> Image: ...

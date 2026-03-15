@@ -1,8 +1,7 @@
-import re
+from collections.abc import Callable
 from typing import IO, NamedTuple, Self
 from xml.etree.ElementTree import Element, ElementTree
-
-from collections.abc import Callable
+import re
 
 from .image import Image, SvgImageFile
 
@@ -32,9 +31,7 @@ class ViewportToUserSpaceTransform:
         translate_y: float,
     ) -> None: ...
     def __eq__(self, other: object) -> bool: ...
-    def __call__(
-        self, rect: tuple[float, float, float, float]
-    ) -> tuple[float, float, float, float]: ...
+    def __call__(self, rect: tuple[float, float, float, float]) -> tuple[float, float, float, float]: ...
 
 def get_viewport_to_user_space_transform(
     svg: SvgImage,
@@ -53,9 +50,7 @@ class SvgWrapper:
     preserve_aspect_ratio: str
     width: float
     height: float
-    def __init__(
-        self, dom: ElementTree, dpi: int = 96, font_size_px: int = 16
-    ) -> None: ...
+    def __init__(self, dom: ElementTree, dpi: int = 96, font_size_px: int = 16) -> None: ...
     def __copy__(self) -> Self: ...
     @classmethod
     def from_file(cls, f: IO[bytes]) -> Self: ...

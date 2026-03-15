@@ -1,5 +1,4 @@
 from numpy import ndarray
-
 from willow.image import Image, RGBImageBuffer
 
 class BaseOpenCVImage(Image):
