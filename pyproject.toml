@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "willow-stubs"
-version = "1.13.0"
+version = "1.13.0a1"
 description = "PEP 561 type stubs for Willow"
 readme = "README.md"
 license = { text = "ISC" }
