@@ -853,7 +853,7 @@ wheels = [
 
 [[package]]
 name = "willow-stubs"
-version = "1.13.0"
+version = "1.13.0a1"
 source = { editable = "." }
 dependencies = [
     { name = "django-stubs" },
